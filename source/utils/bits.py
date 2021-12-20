@@ -1,3 +1,4 @@
+from itertools import zip_longest
 import operator
 from functools import reduce
 from typing import List
@@ -33,7 +34,40 @@ def int_to_bits(n: int, length=7) -> Bits:
 
 def bits_as_str(bits: Bits) -> str:
     """
-    Produces the string representation of a given list of bits:
+    Produces the string representation of the numbers in a given list of bits:
     bits_as_str([1, 0, 1]) => "101"
     """
     return "".join(map(str, bits))
+
+
+def bits_to_char(bits: Bits) -> str:
+    """
+    Returns the char whose ASCII code is the given value given as a sequence of bits.
+    """
+    return chr(int(bits_as_str(bits), 2))
+
+
+def bits_to_str(bits: Bits, char_length=7) -> str:
+    """
+    Produces the string of the given bit sequence, assuming a given length used to
+    encode each character.
+
+    Raises a ValueError if the number of bits isn't a multiple of the length.
+    """
+    if len(bits) % char_length != 0:
+        raise ValueError(
+            f"Expected the bits length ({len(bits)}) to be a multiple of {char_length}"
+        )
+
+    return "".join([bits_to_char(bits) for bits in __grouper(bits, char_length)])
+
+
+def __grouper(iterable, n: int, fillvalue=None):
+    """
+    Collect data into non-overlapping fixed-length chunks or blocks
+    Recipe from https://docs.python.org/3/library/itertools.html.
+
+    grouper('ABCDEFG', 3, 'x') --> ABC DEF Gxx
+    """
+    args = [iter(iterable)] * n
+    return zip_longest(*args, fillvalue=fillvalue)

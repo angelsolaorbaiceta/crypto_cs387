@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from bits import bits_as_str, int_to_bits, str_to_bits
+from utils.bits import bits_as_str, bits_to_str, int_to_bits, str_to_bits
 
 
 class BitsTest(TestCase):
@@ -21,3 +21,7 @@ class BitsTest(TestCase):
         self.assertEqual(
             [1, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1], str_to_bits(string)
         )
+
+    def test_bits_to_string(self):
+        bits = [1, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1]
+        self.assertEqual("CS", bits_to_str(bits))
