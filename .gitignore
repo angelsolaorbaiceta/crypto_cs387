@@ -1,0 +1,3 @@
+doc/*.aux
+doc/*.log
+doc/*.gz
