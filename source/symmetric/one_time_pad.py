@@ -1,6 +1,3 @@
-from utils.bits import str_to_bits, bits_to_str
-
-
 def otp_encrypt(message: str, key: str) -> str:
     """
     Encrypts the given message using the given key and the one-time pad scheme.
@@ -13,11 +10,8 @@ def otp_encrypt(message: str, key: str) -> str:
             f"The lengths of the message ({len(message)}) and the key ({len(key)} don't match)"
         )
 
-    msg_bits = str_to_bits(message)
-    key_bits = str_to_bits(key)
-    cipher_bits = [x ^ y for x, y in zip(msg_bits, key_bits)]
-
-    return bits_to_str(cipher_bits)
+    cipher_bytes = [ord(x) ^ ord(y) for x, y in zip(message, key)]
+    return "".join([chr(b) for b in cipher_bytes])
 
 
 def otp_decrypt(ciphertext: str, key: str) -> str:
