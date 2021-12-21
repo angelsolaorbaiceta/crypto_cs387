@@ -62,6 +62,19 @@ def bits_to_str(bits: Bits, char_length=7) -> str:
     return "".join([bits_to_char(bits) for bits in __grouper(bits, char_length)])
 
 
+def xor_bits(a: Bits, b: Bits) -> Bits:
+    """
+    Applies a bitwise XOR, creating a new sequence of bits from the two input sequences.
+    Raises a ValueError if the two sequences don't match in size.
+    """
+    if len(a) != len(b):
+        raise ValueError(
+            f"Expected bit sequences to have the same length: {len(a)} != {len(b)}"
+        )
+
+    return [x ^ y for x, y in zip(a, b)]
+
+
 def __grouper(iterable, n: int, fillvalue=None):
     """
     Collect data into non-overlapping fixed-length chunks or blocks
