@@ -98,4 +98,19 @@ The Kolmogorov complexity is uncomputable.
 \paragraph{A Pseudo-Random Number Generator (PRNG)} produces a long sequence of seemingly random bytes given an initial seed value.
 In Linux, \emph{dev/random} can be used as a randomness pool.
 
+\subsection{Modes Of Operation}
+
+We assume the message we want to encrypt or decrypt can be broken into $n$ blocks of size $b$:
+
+\[
+  m = m_0, m_1, m_2, \dots, m_{n-1}
+\]
+
+\paragraph{Electronic Codebook Mode} each block is encrypted independently from each other: $c_i = E_k (m_i)$
+and $m_i = D_k (c_i)$.
+The problem with EC mode is that it doesn't hide repetition: equal blocks encrypt to equal ciperthexts.
+
+\paragraph{Cipher Block Chaining Mode} the output of each block is XOR-ed with the input to the next block: $c_i = E_k (m_i \oplus c_{i - 1})$
+and $m_{i} = D_k (c_{i}) \oplus c_{i-1}$.
+
 \end{document}

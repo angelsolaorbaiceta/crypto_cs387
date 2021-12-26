@@ -1,6 +1,8 @@
 import argparse
 from hashlib import sha256
 
+from block_cipher import CBCMode, ECMode
+
 # Blocks of 32 bytes = 256 bits.
 BLOCK_SIZE_BYTES = 32
 
@@ -41,19 +43,22 @@ def init_arguments_parser() -> argparse.ArgumentParser:
         dest="key",
         required=True,
     )
+    parser.add_argument(
+        "-m", "--mode", help="Mode of operation", choices=["ecb", "cbc"], default="ecb"
+    )
 
     return parser
 
 
-def encrypt(plaintext: bytes, key: bytes) -> bytes:
-    if len(plaintext) > len(key):
-        raise ValueError("plaintext block larger than key")
+def get_cipher(mode_of_operation: str, key: bytes):
+    if mode_of_operation == "ecb":
+        return ECMode(key, BLOCK_SIZE_BYTES)
 
-    return bytes([p ^ k for p, k in zip(plaintext, key)])
+    elif mode_of_operation == "cbc":
+        return CBCMode(key, BLOCK_SIZE_BYTES)
 
-
-def decrypt(ciphertext: bytes, key: bytes) -> bytes:
-    return encrypt(ciphertext, key)
+    else:
+        raise ValueError(f"Unknown mode of operation: {mode_of_operation}")
 
 
 if __name__ == "__main__":
@@ -61,18 +66,21 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     key = sha256(args.key.encode("utf-8")).digest()
+    cipher = get_cipher(args.mode, key)
 
     if args.encrypt:
+        print(f"Encrypting file with key: {key.hex()}")
+
         with open(args.in_file_path, "rb") as in_file:
             with open(f"{args.in_file_path}.enc", "wb") as file:
                 while in_bytes := in_file.read(BLOCK_SIZE_BYTES):
-                    file.write(encrypt(in_bytes, key))
+                    file.write(cipher.encrypt_block(in_bytes))
 
     elif args.decrypt:
         with open(args.in_file_path, "rb") as in_file:
             with open(f"{args.in_file_path}.dec", "wb") as file:
                 while in_bytes := in_file.read(BLOCK_SIZE_BYTES):
-                    file.write(decrypt(in_bytes, key))
+                    file.write(cipher.decrypt_block(in_bytes))
 
     else:
         parser.print_help()
