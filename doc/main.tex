@@ -48,4 +48,54 @@ The one-time pad uses this property so that, by using a key that's the same size
 
 The one-time pad encryption and decryption functions are implemented in the \emph{source/one\_time\_pad.py} file.
 
+\subsection{Perfect Cipher}
+
+Recall that given two events $A$ and $B$ in the same probability space, the \textbf{conditional probability} of $B$ given that $A$ occured is:
+
+\[
+  P(B|A) = \frac{P(A \cap B)}{P(A)}
+\]
+
+Now, given two messages, $m$ and $m^*$ drawn from the set of messages $M$ are encrypted using a key $k \in K$ to produce a cypertext $c \in C$,
+a \textbf{perfect cipher} must hold that:
+
+\[
+  P \left( m = m^* | E_k \left( m \right) = c \right) = P \left( m = m^* \right)
+\]
+
+We can now prove that the one-time pad is a perfect cipher as follows.
+For the one-time pad:
+
+\[
+  P \left( E_k \left( m \right) = c \right) = \sum_{m_i \in M} \sum_{k_i \in K} \frac{P(E_{k_i} (m_i) = c)}{|M| \times |K|}
+  = \frac{|M|}{|M| \times |K|}
+  = \frac{1}{|K|}
+\]
+and, assuming a uniform distribution for the key space:
+
+\[
+  P \left( m = m^* \cap E_k(m) = c \right)
+  = P(m = m^*) \times P(k = k^*)
+  = \frac{P(m = m^*)}{|K|}
+\]
+Therefore:
+
+\[
+  P \left( m = m^* | E_k(m) = c \right) = \frac{\frac{P(m = m^*)}{|K|}}{\frac{1}{|K|}}
+  = P(m = m^*)
+\]
+which means that the ciphertext reveals nothing about the key or original message.
+
+\paragraph{Shanon's theorem} If a cipher is perfect, it must be impractical ($|K| \geq |M|$).
+
+
+\section{Application of Symmetric Ciphers}
+
+\paragraph{Kolmogorov complexity} The complexity $K$ of a sequence $s$ ($K(s)$) is the length of the shortest possible description of $s$.
+$s$ is random if $K(s) = |s| + C$.
+The Kolmogorov complexity is uncomputable.
+
+\paragraph{A Pseudo-Random Number Generator (PRNG)} produces a long sequence of seemingly random bytes given an initial seed value.
+In Linux, \emph{dev/random} can be used as a randomness pool.
+
 \end{document}
