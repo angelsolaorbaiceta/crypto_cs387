@@ -82,6 +82,28 @@ def get_cipher(mode_of_operation: str, key: bytes, nonce: bytes, iv: bytes):
         raise ValueError(f"Unknown mode of operation: {mode_of_operation}")
 
 
+def encrypt(in_file_path: str, cipher):
+    out_file_path = f"{in_file_path}.enc"
+
+    with open(in_file_path, "rb") as in_file:
+        with open(out_file_path, "wb") as file:
+            while in_bytes := in_file.read(BLOCK_SIZE_BYTES):
+                file.write(cipher.encrypt_block(in_bytes))
+
+    print(out_file_path)
+
+
+def decrypt(in_file_path: str, cipher):
+    out_file_path = f"{in_file_path}.dec"
+
+    with open(in_file_path, "rb") as in_file:
+        with open(out_file_path, "wb") as file:
+            while in_bytes := in_file.read(BLOCK_SIZE_BYTES):
+                file.write(cipher.decrypt_block(in_bytes))
+
+    print(out_file_path)
+
+
 if __name__ == "__main__":
     parser = init_arguments_parser()
     args = parser.parse_args()
@@ -92,26 +114,10 @@ if __name__ == "__main__":
     cipher = get_cipher(args.mode, key, nonce, iv)
 
     if args.encrypt:
-        print(f"Encrypting file: {cipher}")
-        out_file_path = f"{args.in_file_path}.enc"
-
-        with open(args.in_file_path, "rb") as in_file:
-            with open(out_file_path, "wb") as file:
-                while in_bytes := in_file.read(BLOCK_SIZE_BYTES):
-                    file.write(cipher.encrypt_block(in_bytes))
-
-        print(f"Encryption done: {out_file_path}")
+        encrypt(args.in_file_path, cipher)
 
     elif args.decrypt:
-        print(f"Decrypting file: {cipher}")
-        out_file_path = f"{args.in_file_path}.dec"
-
-        with open(args.in_file_path, "rb") as in_file:
-            with open(out_file_path, "wb") as file:
-                while in_bytes := in_file.read(BLOCK_SIZE_BYTES):
-                    file.write(cipher.decrypt_block(in_bytes))
-
-        print(f"Decryption done: {out_file_path}")
+        decrypt(args.in_file_path, cipher)
 
     else:
         parser.print_help()
