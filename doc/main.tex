@@ -106,7 +106,7 @@ We assume the message we want to encrypt or decrypt can be broken into $n$ block
   m = m_0, m_1, m_2, \dots, m_{n-1}
 \]
 
-\paragraph{Electronic Codebook Mode} each block is encrypted independently from each other:
+\paragraph{Electronic Codebook Mode} (ECB) each block is encrypted independently from each other:
 
 \[
   c_i = E_k (m_i)
@@ -124,7 +124,7 @@ To run a cipher using the ECB mode of operation:
   $ py symmetric/block_cli.py -e -m ecb -f <file> -k <key>
 \end{verbatim}
 
-\paragraph{Cipher Block Chaining Mode} the output of each block is XOR-ed with the input to the next block.
+\paragraph{Cipher Block Chaining Mode (CBC)} the output of each block is XOR-ed with the input to the next block.
 Encryption:
 
 \[
@@ -149,5 +149,21 @@ To run a cipher using the CBC mode of operation:
 \begin{verbatim}
   $ py symmetric/block_cli.py -e -m cbc -f <file> -k <key>
 \end{verbatim}
+
+\paragraph{Counter Mode (CTR)} uses a counter that increments for each block, which concatenated with a \textbf{nonce} is passed to the encryption function.
+The result is then XOR-ed with the message blocks.
+The benefit of CTR is that blocks can be encrypted and decrypted in parallel.
+
+\[
+  c_i = E_k(\mathtt{nonce} || i) \oplus m_i
+\]
+and decryption:
+
+\[
+  m_i = c_i \oplus D_k(\mathtt{nonce} || i)
+\]
+
+If the block size is 32 bytes (256 bits), the nonce and the counter can be 16 bytes (128 bits) each.
+When concatenated, both make a 32 bytes sequence.
 
 \end{document}
