@@ -1,7 +1,7 @@
 import argparse
 from hashlib import sha256
 
-from block_cipher import CBCMode, ECMode
+from block_cipher import CBCMode, ECMode, CTRMode
 
 # Blocks of 32 bytes = 256 bits.
 BLOCK_SIZE_BYTES = 32
@@ -9,7 +9,7 @@ BLOCK_SIZE_BYTES = 32
 
 def init_arguments_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        usage="%(prog)s [OPTIONS] < <file>",
+        usage="%(prog)s [OPTIONS] -f <file> -k <key>",
         description="Encrypts or decrypts the file passed as standard input.",
     )
 
@@ -44,18 +44,32 @@ def init_arguments_parser() -> argparse.ArgumentParser:
         required=True,
     )
     parser.add_argument(
-        "-m", "--mode", help="Mode of operation", choices=["ecb", "cbc"], default="ecb"
+        "-n",
+        "--nonce",
+        help="Nonce used in the CTR mode of operation",
+        dest="nonce",
+        required=False,
+    )
+    parser.add_argument(
+        "-m",
+        "--mode",
+        help="Mode of operation",
+        choices=["ecb", "cbc", "ctr"],
+        default="ecb",
     )
 
     return parser
 
 
-def get_cipher(mode_of_operation: str, key: bytes):
+def get_cipher(mode_of_operation: str, key: bytes, nonce: bytes):
     if mode_of_operation == "ecb":
         return ECMode(key, BLOCK_SIZE_BYTES)
 
     elif mode_of_operation == "cbc":
         return CBCMode(key, BLOCK_SIZE_BYTES)
+
+    elif mode_of_operation == "ctr":
+        return CTRMode(key, nonce, BLOCK_SIZE_BYTES)
 
     else:
         raise ValueError(f"Unknown mode of operation: {mode_of_operation}")
@@ -66,7 +80,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     key = sha256(args.key.encode("utf-8")).digest()
-    cipher = get_cipher(args.mode, key)
+    nonce = sha256(args.nonce.encode("utf-8")).digest() if args.nonce else None
+    cipher = get_cipher(args.mode, key, nonce)
 
     if args.encrypt:
         print(f"Encrypting file: {cipher}")
