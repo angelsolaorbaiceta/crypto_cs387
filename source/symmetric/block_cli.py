@@ -51,6 +51,13 @@ def init_arguments_parser() -> argparse.ArgumentParser:
         required=False,
     )
     parser.add_argument(
+        "-iv",
+        "--iv",
+        help="Initialization vector used in the CBC mode of operation",
+        dest="iv",
+        required=False,
+    )
+    parser.add_argument(
         "-m",
         "--mode",
         help="Mode of operation",
@@ -61,12 +68,12 @@ def init_arguments_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def get_cipher(mode_of_operation: str, key: bytes, nonce: bytes):
+def get_cipher(mode_of_operation: str, key: bytes, nonce: bytes, iv: bytes):
     if mode_of_operation == "ecb":
         return ECMode(key, BLOCK_SIZE_BYTES)
 
     elif mode_of_operation == "cbc":
-        return CBCMode(key, BLOCK_SIZE_BYTES)
+        return CBCMode(key, iv, BLOCK_SIZE_BYTES)
 
     elif mode_of_operation == "ctr":
         return CTRMode(key, nonce, BLOCK_SIZE_BYTES)
@@ -81,23 +88,30 @@ if __name__ == "__main__":
 
     key = sha256(args.key.encode("utf-8")).digest()
     nonce = sha256(args.nonce.encode("utf-8")).digest() if args.nonce else None
-    cipher = get_cipher(args.mode, key, nonce)
+    iv = sha256(args.iv.encode("utf-8")).digest() if args.iv else None
+    cipher = get_cipher(args.mode, key, nonce, iv)
 
     if args.encrypt:
         print(f"Encrypting file: {cipher}")
+        out_file_path = f"{args.in_file_path}.enc"
 
         with open(args.in_file_path, "rb") as in_file:
-            with open(f"{args.in_file_path}.enc", "wb") as file:
+            with open(out_file_path, "wb") as file:
                 while in_bytes := in_file.read(BLOCK_SIZE_BYTES):
                     file.write(cipher.encrypt_block(in_bytes))
 
+        print(f"Encryption done: {out_file_path}")
+
     elif args.decrypt:
         print(f"Decrypting file: {cipher}")
+        out_file_path = f"{args.in_file_path}.dec"
 
         with open(args.in_file_path, "rb") as in_file:
-            with open(f"{args.in_file_path}.dec", "wb") as file:
+            with open(out_file_path, "wb") as file:
                 while in_bytes := in_file.read(BLOCK_SIZE_BYTES):
                     file.write(cipher.decrypt_block(in_bytes))
+
+        print(f"Decryption done: {out_file_path}")
 
     else:
         parser.print_help()

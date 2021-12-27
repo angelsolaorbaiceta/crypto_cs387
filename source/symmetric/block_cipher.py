@@ -89,6 +89,7 @@ class CBCMode:
             f"CBC mode"
             + f"\n  block size = {self.__block_size_bytes} bytes"
             + f"\n  key = {self.__key.hex()}"
+            + f"\n  IV = {self.__init_vec.hex()}"
         )
 
 
