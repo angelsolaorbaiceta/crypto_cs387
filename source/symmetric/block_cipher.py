@@ -45,21 +45,26 @@ class ECMode:
 class CBCMode:
     """
     Cipher Block Chaining mode of operation implementation of a block cipher.
-
-    TODO: missing IV (initialization vector) to encrypt the first block.
     """
 
-    def __init__(self, key: bytes, block_size_bytes=BLOCK_SIZE_BYTES):
+    def __init__(
+        self, key: bytes, init_vec: bytes = None, block_size_bytes=BLOCK_SIZE_BYTES
+    ):
         if len(key) != block_size_bytes:
             raise ValueError("Block and key sizes should be equal")
 
         self.__block_size_bytes = block_size_bytes
         self.__key = key
+        self.__init_vec = init_vec
         self.__last_block = None
 
     def encrypt_block(self, block: bytes) -> bytes:
         if self.__last_block is None:
-            self.__last_block = _encrypt(block, self.__key)
+            if self.__init_vec is None:
+                self.__last_block = _encrypt(block, self.__key)
+            else:
+                m_xor_iv = _xor_bytes(block, self.__init_vec)
+                self.__last_block = _encrypt(m_xor_iv, self.__key)
         else:
             m_xor_c = _xor_bytes(block, self.__last_block)
             self.__last_block = _encrypt(m_xor_c, self.__key)
@@ -67,11 +72,14 @@ class CBCMode:
         return self.__last_block
 
     def decrypt_block(self, block: bytes) -> bytes:
-        plaintext = (
-            _decrypt(block, self.__key)
-            if self.__last_block is None
-            else _xor_bytes(_decrypt(block, self.__key), self.__last_block)
-        )
+        if self.__last_block is None:
+            if self.__init_vec is None:
+                plaintext = _decrypt(block, self.__key)
+            else:
+                plaintext = _xor_bytes(_decrypt(block, self.__key), self.__init_vec)
+        else:
+            plaintext = _xor_bytes(_decrypt(block, self.__key), self.__last_block)
+
         self.__last_block = block
 
         return plaintext
