@@ -1,4 +1,11 @@
+# Python related
 __pycache__
+
+# Documentation (Latex output)
 doc/*.aux
 doc/*.log
 doc/*.gz
+
+# Encrypted and decrypted files
+*.enc
+*.dec
