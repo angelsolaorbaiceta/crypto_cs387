@@ -7,7 +7,7 @@ from block_cipher import get_cipher
 BLOCK_SIZE_BYTES = 32
 
 
-def init_arguments_parser() -> argparse.ArgumentParser:
+def _init_arguments_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         usage="%(prog)s [OPTIONS] -f <file> -k <key>",
         description="Encrypts or decrypts the file passed as standard input.",
@@ -68,7 +68,7 @@ def init_arguments_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def encrypt(in_file_path: str, cipher):
+def _encrypt(in_file_path: str, cipher):
     out_file_path = f"{in_file_path}.enc"
 
     with open(in_file_path, "rb") as in_file:
@@ -76,10 +76,8 @@ def encrypt(in_file_path: str, cipher):
             while in_bytes := in_file.read(BLOCK_SIZE_BYTES):
                 file.write(cipher.encrypt_block(in_bytes))
 
-    print(out_file_path)
 
-
-def decrypt(in_file_path: str, cipher):
+def _decrypt(in_file_path: str, cipher):
     out_file_path = f"{in_file_path}.dec"
 
     with open(in_file_path, "rb") as in_file:
@@ -87,23 +85,25 @@ def decrypt(in_file_path: str, cipher):
             while in_bytes := in_file.read(BLOCK_SIZE_BYTES):
                 file.write(cipher.decrypt_block(in_bytes))
 
-    print(out_file_path)
+
+def _str_to_digest(string: str) -> bytes:
+    return sha256(string.encode("utf-8")).digest()
 
 
 if __name__ == "__main__":
-    parser = init_arguments_parser()
+    parser = _init_arguments_parser()
     args = parser.parse_args()
 
-    key = sha256(args.key.encode("utf-8")).digest()
-    nonce = sha256(args.nonce.encode("utf-8")).digest() if args.nonce else None
-    iv = sha256(args.iv.encode("utf-8")).digest() if args.iv else None
+    key = _str_to_digest(args.key)
+    nonce = _str_to_digest(args.nonce) if args.nonce else None
+    iv = _str_to_digest(args.iv) if args.iv else None
     cipher = get_cipher(args.mode, key, nonce, iv)
 
     if args.encrypt:
-        encrypt(args.in_file_path, cipher)
+        _encrypt(args.in_file_path, cipher)
 
     elif args.decrypt:
-        decrypt(args.in_file_path, cipher)
+        _decrypt(args.in_file_path, cipher)
 
     else:
         parser.print_help()
