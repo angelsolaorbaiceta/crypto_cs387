@@ -175,5 +175,37 @@ To run a cipher using the CTR mode of operation:
     -n <nonce>
 \end{verbatim}
 
+\subsection{Protocols}
+
+A \textbf{protocol} is a precisely defined sequence of steps agreed upon two parties.
+A \textbf{cryptographic protocol} involves shared secrets between the two parties, and, for it to be \textbf{secure}, it must provide some guarantees even if some participants cheat.
+
+
+\subsection{Cryptographic Hash Functions}
+
+A \textbf{hash function} $h = H(x)$ is a function defined over a large input domain which output is of a fixed --usually small-- length.
+A regular hash function has the following properties:
+
+\begin{itemize}
+  \item compression: a large input domain is mapped to a small fixed output
+  \item well distributed: $P(H(x) = i) \sim \frac{1}{N}$, where $N$ is the size of the output
+\end{itemize}
+Additionally, \textbf{cryptographic hash functions} must have the following properties:
+
+\begin{itemize}
+  \item pre-image resistance ("one-way ness"): given $h = H(x)$, it's hard to find $x$
+  \item weak collision resistance: given $h = H(x)$, it's hard to find any $x'$ such that $H(x') = h$
+  \item strong collision resistance: it's hard to find any pair $x$ and $y$ such that $H(x) = H(y)$
+\end{itemize}
+
+Given an ideal hash function with $N$ possible outputs, an attacker is expected to need:
+\begin{itemize}
+  \item weak: $\sim N$ guesses to find $x'$ where $H(x') = h$
+  \item strong: $\sim \sqrt{N}$ guesses to find $x$, $y$ where $H(x) = H(y)$.
+\end{itemize}
+
+\paragraph{Salted password scheme} To securely store passwords and avoid dictionary attacks --where the attacker precomputes a list of password hashes--,
+a good scheme is to hash the result of concatenating a \textbf{salt} (sequence or random bits) with the password: $H(\mathtt{salt} || \mathtt{password})$.
+The salt can be stored together with the password; it's just used to avoid the dictionary attack.
 
 \end{document}
