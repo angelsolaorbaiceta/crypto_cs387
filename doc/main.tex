@@ -166,4 +166,14 @@ and decryption:
 If the block size is 32 bytes (256 bits), the nonce and the counter can be 16 bytes (128 bits) each.
 When concatenated, both make a 32 bytes sequence.
 
+To run a cipher using the CTR mode of operation:
+
+\begin{verbatim}
+  $ py symmetric/block_cli.py -e -m ctr \
+    -f <file> \
+    -k <key> \
+    -n <nonce>
+\end{verbatim}
+
+
 \end{document}

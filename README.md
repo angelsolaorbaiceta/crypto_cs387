@@ -7,3 +7,8 @@ Under no circumstance this code should be used in production or any serious appl
 
 The notes from the class are written using LaTeX.
 The source is _doc/main.tex_, and the compiled PDF can be [read here](./doc/main.pdf).
+
+## Relevant Documentation
+
+- [argparse](https://docs.python.org/3/library/argparse.html)
+- [hashlib](https://docs.python.org/3/library/hashlib.html)
