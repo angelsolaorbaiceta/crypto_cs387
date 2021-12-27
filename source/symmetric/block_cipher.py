@@ -16,6 +16,22 @@ def _decrypt(block: bytes, key: bytes) -> bytes:
     return _xor_bytes(block, key)
 
 
+def get_cipher(
+    mode_of_operation: str, key: bytes, nonce: bytes = None, iv: bytes = None
+):
+    if mode_of_operation == "ecb":
+        return ECMode(key, BLOCK_SIZE_BYTES)
+
+    elif mode_of_operation == "cbc":
+        return CBCMode(key, iv, BLOCK_SIZE_BYTES)
+
+    elif mode_of_operation == "ctr":
+        return CTRMode(key, nonce, BLOCK_SIZE_BYTES)
+
+    else:
+        raise ValueError(f"Unknown mode of operation: {mode_of_operation}")
+
+
 class ECMode:
     """
     Electronic Codebook mode of operation implementation of a block cipher.

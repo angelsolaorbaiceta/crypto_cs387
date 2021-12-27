@@ -1,7 +1,7 @@
 import argparse
 from hashlib import sha256
 
-from block_cipher import CBCMode, ECMode, CTRMode
+from block_cipher import get_cipher
 
 # Blocks of 32 bytes = 256 bits.
 BLOCK_SIZE_BYTES = 32
@@ -66,20 +66,6 @@ def init_arguments_parser() -> argparse.ArgumentParser:
     )
 
     return parser
-
-
-def get_cipher(mode_of_operation: str, key: bytes, nonce: bytes, iv: bytes):
-    if mode_of_operation == "ecb":
-        return ECMode(key, BLOCK_SIZE_BYTES)
-
-    elif mode_of_operation == "cbc":
-        return CBCMode(key, iv, BLOCK_SIZE_BYTES)
-
-    elif mode_of_operation == "ctr":
-        return CTRMode(key, nonce, BLOCK_SIZE_BYTES)
-
-    else:
-        raise ValueError(f"Unknown mode of operation: {mode_of_operation}")
 
 
 def encrypt(in_file_path: str, cipher):
