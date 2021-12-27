@@ -6,6 +6,16 @@ def _xor_bytes(seq_a: bytes, seq_b: bytes) -> bytes:
     return bytes([a ^ b for a, b in zip(seq_a, seq_b)])
 
 
+def _encrypt(block: bytes, key: bytes) -> bytes:
+    """Default encryption scheme: XOR block and key bytes."""
+    return _xor_bytes(block, key)
+
+
+def _decrypt(block: bytes, key: bytes) -> bytes:
+    """Default decryption scheme: XOR block and key bytes."""
+    return _xor_bytes(block, key)
+
+
 class ECMode:
     """
     Electronic Codebook mode of operation implementation of a block cipher.
@@ -19,10 +29,10 @@ class ECMode:
         self.__key = key
 
     def encrypt_block(self, block: bytes) -> bytes:
-        return _xor_bytes(block, self.__key)
+        return _encrypt(block, self.__key)
 
     def decrypt_block(self, block: bytes) -> bytes:
-        return _xor_bytes(block, self.__key)
+        return _decrypt(block, self.__key)
 
     def __repr__(self) -> str:
         return (
@@ -49,18 +59,18 @@ class CBCMode:
 
     def encrypt_block(self, block: bytes) -> bytes:
         if self.__last_block is None:
-            self.__last_block = _xor_bytes(block, self.__key)
+            self.__last_block = _encrypt(block, self.__key)
         else:
             m_xor_c = _xor_bytes(block, self.__last_block)
-            self.__last_block = _xor_bytes(m_xor_c, self.__key)
+            self.__last_block = _encrypt(m_xor_c, self.__key)
 
         return self.__last_block
 
     def decrypt_block(self, block: bytes) -> bytes:
         plaintext = (
-            _xor_bytes(block, self.__key)
+            _decrypt(block, self.__key)
             if self.__last_block is None
-            else _xor_bytes(_xor_bytes(block, self.__key), self.__last_block)
+            else _xor_bytes(_decrypt(block, self.__key), self.__last_block)
         )
         self.__last_block = block
 
@@ -111,11 +121,11 @@ class CTRMode:
 
     def encrypt_block(self, block: bytes) -> bytes:
         self.__counter += 1
-        return _xor_bytes(_xor_bytes(self.__nonced_counter, self.__key), block)
+        return _xor_bytes(_encrypt(self.__nonced_counter, self.__key), block)
 
     def decrypt_block(self, block: bytes) -> bytes:
         self.__counter += 1
-        return _xor_bytes(block, _xor_bytes(self.__nonced_counter, self.__key))
+        return _xor_bytes(block, _decrypt(self.__nonced_counter, self.__key))
 
     def __repr__(self) -> str:
         return (
