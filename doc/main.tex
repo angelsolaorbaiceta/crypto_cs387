@@ -106,11 +106,48 @@ We assume the message we want to encrypt or decrypt can be broken into $n$ block
   m = m_0, m_1, m_2, \dots, m_{n-1}
 \]
 
-\paragraph{Electronic Codebook Mode} each block is encrypted independently from each other: $c_i = E_k (m_i)$
-and $m_i = D_k (c_i)$.
-The problem with EC mode is that it doesn't hide repetition: equal blocks encrypt to equal ciperthexts.
+\paragraph{Electronic Codebook Mode} each block is encrypted independently from each other:
 
-\paragraph{Cipher Block Chaining Mode} the output of each block is XOR-ed with the input to the next block: $c_i = E_k (m_i \oplus c_{i - 1})$
-and $m_{i} = D_k (c_{i}) \oplus c_{i-1}$.
+\[
+  c_i = E_k (m_i)
+\]
+and decryption:
+
+\[
+  m_i = D_k (c_i)
+\]
+
+The problem with ECB mode is that it doesn't hide repetition: equal blocks encrypt to equal ciperthexts.
+To run a cipher using the ECB mode of operation:
+
+\begin{verbatim}
+  $ py symmetric/block_cli.py -e -m ecb -f <file> -k <key>
+\end{verbatim}
+
+\paragraph{Cipher Block Chaining Mode} the output of each block is XOR-ed with the input to the next block.
+Encryption:
+
+\[
+  c_i = E_k (m_i \oplus c_{i - 1})
+\]
+and if an \textbf{initialization vector} is used, the first block:
+
+\[
+  c_0 = E_k (m_0 \oplus IV)
+\]
+and decryption:
+
+\[
+  m_i = D_k (c_i) \oplus c_{i-1}
+\]
+\[
+  m_0 = D_k(c_0) \oplus IV
+\]
+
+To run a cipher using the CBC mode of operation:
+
+\begin{verbatim}
+  $ py symmetric/block_cli.py -e -m cbc -f <file> -k <key>
+\end{verbatim}
 
 \end{document}

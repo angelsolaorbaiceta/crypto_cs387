@@ -69,7 +69,7 @@ if __name__ == "__main__":
     cipher = get_cipher(args.mode, key)
 
     if args.encrypt:
-        print(f"Encrypting file with key: {key.hex()}")
+        print(f"Encrypting file: {cipher}")
 
         with open(args.in_file_path, "rb") as in_file:
             with open(f"{args.in_file_path}.enc", "wb") as file:
@@ -77,6 +77,8 @@ if __name__ == "__main__":
                     file.write(cipher.encrypt_block(in_bytes))
 
     elif args.decrypt:
+        print(f"Decrypting file: {cipher}")
+
         with open(args.in_file_path, "rb") as in_file:
             with open(f"{args.in_file_path}.dec", "wb") as file:
                 while in_bytes := in_file.read(BLOCK_SIZE_BYTES):
