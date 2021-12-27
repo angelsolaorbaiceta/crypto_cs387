@@ -12,6 +12,11 @@
   \maketitle
 \end{titlepage}
 
+% ======================================================================
+% ======================================================================
+%          SECTION
+% ======================================================================
+% ======================================================================
 \section{Concepts}
 
 Given a message $m \in M$, where $M$ is the set of all possible messages, and a key $k \in K$, where $K$ is the set of all possible keys, an encryption function $E$ can be defined as:
@@ -89,6 +94,11 @@ which means that the ciphertext reveals nothing about the key or original messag
 \paragraph{Shanon's theorem} If a cipher is perfect, it must be impractical ($|K| \geq |M|$).
 
 
+% ======================================================================
+% ======================================================================
+%          SECTION
+% ======================================================================
+% ======================================================================
 \section{Application of Symmetric Ciphers}
 
 \paragraph{Kolmogorov complexity} The complexity $K$ of a sequence $s$ ($K(s)$) is the length of the shortest possible description of $s$.
@@ -207,5 +217,70 @@ Given an ideal hash function with $N$ possible outputs, an attacker is expected 
 \paragraph{Salted password scheme} To securely store passwords and avoid dictionary attacks --where the attacker precomputes a list of password hashes--,
 a good scheme is to hash the result of concatenating a \textbf{salt} (sequence or random bits) with the password: $H(\mathtt{salt} || \mathtt{password})$.
 The salt can be stored together with the password; it's just used to avoid the dictionary attack.
+
+
+% ======================================================================
+% ======================================================================
+%          SECTION
+% ======================================================================
+% ======================================================================
+\section{Key Distribution}
+
+With symmertic ciphers, the parties need to share a secret before they can communicate securely: \textbf{the key}.
+But distributing keys among all possible pairs of parties who want to communicate isn't practical.
+
+\paragraph{Pairwise distribution} If $n$ people want to communicate with each other, that'd mean that $\frac{n \times (n - 1)}{2}$ different keys need to be shared among them.
+For 100 people, this would be $\frac{100 \times 99}{2} = 4950$ keys.
+This is obviously impractical.
+
+\paragraph{Trusted third party} A third party might be trusted to maintain a secret with each person who wants to communicate.
+Then, whenever two persons --say Alice and Bob-- want to communicate, they must first ask the third party to create a new secret key for them.
+
+\subsection{Diffie-Hellman Key Exchange}
+
+Published in 1976 by Whitfield Diffie and Martin Hellman in their famous paper ``New Directions in Cryptography''.
+
+\paragraph{Diffie-Hellman Key Exchange} This protocol --assuming Alice and Bob want to share a private key-- works as follows:
+
+\begin{enumerate}
+  \item Alice and Bob agree on two shared numbers: a large prime number $q$ and $g$, a primitive root\footnote{$g$ is a primitive root of $q$ if $\forall x \in \lbrace 1, 2, \dots, q-1\rbrace \exists k$ such that $g^k = x$.} of $q$
+  \item Alice chooses a random secret value $x_A = \lbrace 0, 1 \rbrace^n$ and computes $y_A = g^{x_A} \: \mathtt{mod} \: q$
+  \item Bob chooses a random secret value $x_B = \lbrace 0, 1 \rbrace^n$ and computes $y_B = g^{x_B} \: \mathtt{mod} \: q$
+  \item Alice and Bob exchange the $y_A$ and $y_B$ values
+  \item Alice can compute the shared secret key: $k_{AB} = y_B^{x_A} \: \mathtt{mod} \: q$
+  \item Bob can compute the shared secret key: $k_{BA} = y_A^{x_B} \: \mathtt{mod} \: q$
+\end{enumerate}
+
+We can prove that the keys that both Alice and Bob compute are the same ($k_{AB} = k_{BA}$) since, for Alice:
+
+\[
+  k_{AB} = y_B^{x_A} \: \mathtt{mod} \: q = g^{x_B \times x_A} \: \mathtt{mod} \: q
+\]
+and for the case of Bob:
+
+\[
+  k_{BA} = y_A^{x_B} \: \mathtt{mod} \: q = g^{x_A \times x_B} \: \mathtt{mod} \: q
+\]
+
+A \textbf{passive eavesdropper} would know about $q$, $g$, $y_A$ and $y_B$, so, how can be sure they wouldn't be able to compute the private key $k_{AB}$?
+An adversary would need to be able to solve the discrete logarithm problem in order to compute the shared secret key, and we know the discrete logarithm problem is very hard to solve.
+
+\paragraph{The Discrete Logarithm Problem} With continuous logarithms, if we're given the equation $a^x = b$, we know of efficient ways to compute $x$ if we rearrange the equation as $x = \log_a b$.
+In the discrete logarithm case: computing $x$ in $a^x = b \: \mathtt{mod} \: n$, there isn't a known way to solve it.
+One thing to note about $a^x = b \: \mathtt{mod} \: n$ is that it doesn't always have a solution (as opposed to the continuous case), but if $n$ is a prime number and $a$ is a generator\footnote{A number $g$ is a generator if its powers form a permutation of the numbers in $Z_n$: $\lbrace 1, 2, \dots, n-1 \rbrace$.} number, then there must be a solution for $x$.
+
+Computing $a^n$ can be done using $O(\log n)$ multiplications.
+Modular exponentiation is linear in the size (bits to represent) of the power.
+
+\paragraph{Rabin-Miller and AKS Primality Tests} To test if a large number is prime in a reasonable amount of time.
+
+
+% ======================================================================
+% ======================================================================
+%          SECTION
+% ======================================================================
+% ======================================================================
+\section{Asymmetric Cryptosystems}
+
 
 \end{document}
