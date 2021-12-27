@@ -100,7 +100,7 @@ class CTRMode:
         if len(key) != block_size_bytes:
             raise ValueError("Block and key sizes should be equal")
 
-        if nonce and len(nonce) < block_size_bytes:
+        if nonce and 1 > len(nonce) < block_size_bytes:
             raise ValueError("Nonce and block sizes should be equal")
 
         self.__block_size_bytes = block_size_bytes
