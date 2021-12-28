@@ -282,5 +282,49 @@ Modular exponentiation is linear in the size (bits to represent) of the power.
 % ======================================================================
 \section{Asymmetric Cryptosystems}
 
+Using a pair of keys, one public $k_{pub}$ and one private $k_{priv}$, Alice can encrypt a message using $k_{pub}$ and send it to Bob --the owner of $k_{priv}$-- so he can be the only one to decrypt it and read it.
+In this case, the correctness property can be stated as:
 
+\[
+  D_{k_{priv}} (E_{k_{pub}} (m)) = m
+\]
+
+This pair of keys can also be used for \textbf{signing documents}.
+The owner of $k_{priv}$ can sign (encrypt) the hash of the document using $k_{priv}$, and then $k_{pub}$ can be used to ensure that the decrypted hash matches the actual hash of the signed document.
+
+\subsection{RSA}
+
+The name comes from the initials of its inventors: Ron Rivest, Adi Shamir and Len Adleman.
+In the RSA protocol, the public key is made up of two numbers $e$ and $n$:
+
+\[
+  k_{pub} = (e, n)
+\]
+and the private key follows suit:
+
+\[
+  k_{priv} = (d, n)
+\]
+The number $n$ is the product $n = q \times q$, where $p$ and $q$ are two large prime numbes.
+Encryption and decryption are then performed as follows:
+
+\[
+  E_{k_{pub}} (m) = m^e \: \mathtt{mod} \: n
+\]
+\[
+  D_{k_{priv}} (c) = c^d \: \mathtt{mod} \: n
+\]
+
+In order for RSA to be invertible ($D_{k_{priv}} (E_{k_{pub}} (m)) = m$), the following must hold:
+
+\[
+  m^{ed - 1} = 1 \: \mathtt{mod} \: n
+\]
+Therefore $e$, $d$ and $n$ need to be selected such that $\forall m \in Z_n: m^{ed-1} \equiv 1 \: \mathtt{mod} \: n$.
+
+\paragraph{Euler's Theorem} states that if $gcd(a, n) = 1$, then $a^{\phi(n)} \equiv 1 \: \mathtt{mod} \: n$.
+Here $\phi(n)$ is the \textbf{totient function}, the number of positive integers smaller than $n$ that are relatively prime to $n$.
+Recall that two positive integers are said to be \textbf{relatively prime} if their greatest common divisor is 1.
+
+If $n = pq$ where $p$ and $q$ are prime, then $\phi(n) = \phi(p) \phi(q)$.
 \end{document}

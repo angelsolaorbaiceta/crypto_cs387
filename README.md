@@ -13,4 +13,5 @@ The source is _doc/main.tex_, and the compiled PDF can be [read here](./doc/main
 - [argparse](https://docs.python.org/3/library/argparse.html): Parser for command-line options, arguments and sub-commands
 - [hashlib](https://docs.python.org/3/library/hashlib.html): Secure hashes and message digests
 - [unittest](https://docs.python.org/3/library/unittest.html): Unit testing framework
+- [math](https://docs.python.org/3/library/math.html): Mathematical functions
 - [amsmath](https://tug.org/teTeX/tetex-texmfdist/doc/latex/amsmath/amsldoc.pdf): LaTeX math package documentation
