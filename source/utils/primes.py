@@ -19,18 +19,18 @@ def totient(n: int) -> int:
 
     See: https://en.wikipedia.org/wiki/Euler%27s_totient_function.
     """
-    # TODO: if n is prime, then totient(n) = n-1
-    # TODO: if n = p q where p and q are prime = totient(n) = totient(p) * totient(q)
-    count = 0
+    if is_probably_prime(n):
+        return n - 1
 
+    count = 0
     for i in range(1, n + 1):
-        if are_rel_prime(i, n):
+        if are_coprime(i, n):
             count += 1
 
     return count
 
 
-def are_rel_prime(a: int, b: int) -> bool:
+def are_coprime(a: int, b: int) -> bool:
     """
     Checks whether two integers are relatively prime or coprime, that is, if
     their greatest common divisor is 1.
