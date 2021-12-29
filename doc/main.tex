@@ -329,4 +329,27 @@ Here $\phi(n)$ is the \textbf{totient function}, the number of positive integers
 Recall that two positive integers are said to be \textbf{relatively prime} if their greatest common divisor is 1.
 
 If $n = pq$ where $p$ and $q$ are prime, then $\phi(n) = \phi(p) \phi(q)$.
+Thanks to Euler's theorem, we need to find the numbers $e$ and $d$ such that:
+
+\[
+  e d - 1 = \phi(n) = (p - 1) (q - 1)
+\]
+From $e$ and $d$ we should randomly generate $d$, which is the private key number.
+$d$ should be relatively prime with $\phi(n)$, so that $d e = 1 \: \mathtt{mod} \: n$.
+
+\paragraph{The Security of RSA} Given $e$, $n$ it's hard to find $d$.
+It'd be easy for an attacker who knows $n = pd$, the factors of $n$: $d = e^{-1} \phi(n)$, where, once the factors are known $\phi(n) = (p - 1)(q - 1)$.
+
+RSA is secure because to find the private number $d$ knowing $e$ and $n$, we need to find the factors of $n$ ($p$ and $q$), but we know that factoring $n$ is a hard problem.
+
+\subsection{Signing A Document Using RSA}
+
+To sign a document using RSA:
+\begin{enumerate}
+  \item Hash the message: $H(m)$
+  \item Encrypt using the private key $k_{priv}$ the hash: $E_{k_{priv}} (H(m))$
+  \item Send together: $\langle m, E_{k_{priv}} (H(m)) \rangle$
+  \item $k_{pub}$ can be used to verify that $H(m) = D_{k_{pub}} (E_{k_{priv}} (H(m)))$
+\end{enumerate}
+
 \end{document}
