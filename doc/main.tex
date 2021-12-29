@@ -322,6 +322,8 @@ In order for RSA to be invertible ($D_{k_{priv}} (E_{k_{pub}} (m)) = m$), the fo
 \]
 Therefore $e$, $d$ and $n$ need to be selected such that $\forall m \in Z_n: m^{ed-1} \equiv 1 \: \mathtt{mod} \: n$.
 
+\paragraph{Fermat's Little Theorem} states that $a^{n-1} \equiv 1 \: \mathtt{mod} \: n$ if $n$ is a prime number and $gcd(a, n) = 1$.
+
 \paragraph{Euler's Theorem} states that if $gcd(a, n) = 1$, then $a^{\phi(n)} \equiv 1 \: \mathtt{mod} \: n$.
 Here $\phi(n)$ is the \textbf{totient function}, the number of positive integers smaller than $n$ that are relatively prime to $n$.
 Recall that two positive integers are said to be \textbf{relatively prime} if their greatest common divisor is 1.

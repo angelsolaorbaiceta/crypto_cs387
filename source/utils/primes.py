@@ -119,3 +119,13 @@ def is_perfect_power(n: int) -> bool:
             return True
 
     return False
+
+
+def next_prime(n: int) -> int:
+    """
+    Finds the next prime number after a given number.
+    """
+    if is_probably_prime(n + 1):
+        return n + 1
+
+    return next_prime(n + 1)
